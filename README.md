@@ -4,7 +4,6 @@ If you want to run the code, please install Python package citipy and geopy.
 
 ```bash
 pip install citipy
-pip install geopy
 ```
 
 Since the log file is very long, I added an option in code to log to a log file: [weather_py.log](weather_py.log)
