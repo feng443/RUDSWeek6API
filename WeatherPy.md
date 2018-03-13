@@ -4,6 +4,15 @@
 2. On South Hemisphere, temperate drop slower with laptitude than North Hemisphere. This might be because the it is winter at North but summer at South right now.
 3. Humidity level by average looks higher on North vs. South Hemisphere. This might also due to seasons.
 4. No apparent patterns obsered from scatter plots for couldiness and wind speed
+**Note**: I use following method to retrieve the actual latitude and longitude of the cities, as by chance it is more likely a random picked coordinate is in the middle of ocean:
+
+```python
+from citipy.citipy import WORLD_CITIES_DICT
+CITIES_LAT_LON_DICT = {city: lat_lon for lat_lon, city in WORLD_CITIES_DICT.items()}
+
+(actual_lat, actual_lon) = CITIES_LAT_LON_DICT[city]
+```
+
 
 ```python
 import os
@@ -14,7 +23,9 @@ from datetime import date
 import matplotlib.pyplot as plt
 import seaborn as sns
 from citipy import citipy
-from geopy.geocoders import Nominatim
+from citipy.citipy import WORLD_CITIES_DICT
+CITIES_LAT_LON_DICT = {city: lat_lon for lat_lon, city in WORLD_CITIES_DICT.items()}
+
 from config import WOM_API_KEY
 
 class WeatherPy(object):
@@ -26,7 +37,6 @@ class WeatherPy(object):
     _csv_file = None
     _png_file = None
     _actual_png_file = None
-    _geolocator = Nominatim()
     _base_url = 'http://api.openweathermap.org/data/2.5/weather?units=Imperial&APPID=' + WOM_API_KEY + '&q='
     _today = date.today().strftime('%m/%d/%y')
     
@@ -65,6 +75,7 @@ class WeatherPy(object):
         while True:
             lat, lon = (random.uniform(-90, 90), random.uniform(-180, 180))
             city = citipy.nearest_city(lat, lon)
+            (actual_lat, actual_lon) = CITIES_LAT_LON_DICT[city]
             city_name = city.city_name
             country_code = city.country_code
             city_full = city_name + ',' + city.country_code
@@ -76,19 +87,6 @@ class WeatherPy(object):
                 self.log('Skip duplicate {}'.format(city_full))
                 continue
             
-            # Get actual location of the city.
-            location = self._geolocator.geocode(city_full)
-            if location:                                    
-                actual_lat = location.latitude
-                actual_lon = location.longitude
-                                            
-            #g = geocoder.google(city_full)
-            #if g:
-            #    (actual_lat, actual_lon) = g.latlng
-            else:
-                self.log('Unable to get actual location of the city {}. Skip.'.format(city_full))
-                continue
-                
             # Check weather
             url = self._base_url + city_full
             self.log(url)
@@ -220,73 +218,73 @@ weather_py.cities.head()
   <tbody>
     <tr>
       <th>0</th>
-      <td>carutapera</td>
-      <td>br</td>
-      <td>03/11/18</td>
-      <td>8.251069</td>
-      <td>-40.611262</td>
-      <td>-1.201664</td>
-      <td>-46.020562</td>
-      <td>86</td>
-      <td>83.35</td>
-      <td>32</td>
-      <td>10.11</td>
+      <td>hobart</td>
+      <td>au</td>
+      <td>03/13/18</td>
+      <td>-45.228125</td>
+      <td>156.564577</td>
+      <td>-42.883209</td>
+      <td>147.331665</td>
+      <td>82</td>
+      <td>55.40</td>
+      <td>40</td>
+      <td>4.70</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>ushuaia</td>
-      <td>ar</td>
-      <td>03/11/18</td>
-      <td>-88.345452</td>
-      <td>-52.040169</td>
-      <td>-54.806933</td>
-      <td>-68.307325</td>
-      <td>66</td>
-      <td>51.80</td>
-      <td>20</td>
-      <td>4.59</td>
+      <td>khanapur</td>
+      <td>in</td>
+      <td>03/13/18</td>
+      <td>15.671462</td>
+      <td>74.445589</td>
+      <td>15.633333</td>
+      <td>74.516667</td>
+      <td>41</td>
+      <td>78.22</td>
+      <td>8</td>
+      <td>3.71</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>beira</td>
-      <td>mz</td>
-      <td>03/11/18</td>
-      <td>-21.125569</td>
-      <td>35.654364</td>
-      <td>-19.828707</td>
-      <td>34.841782</td>
+      <td>atuona</td>
+      <td>pf</td>
+      <td>03/13/18</td>
+      <td>-5.183757</td>
+      <td>-127.591869</td>
+      <td>-9.800000</td>
+      <td>-139.033333</td>
+      <td>100</td>
+      <td>77.05</td>
       <td>88</td>
-      <td>78.80</td>
-      <td>40</td>
-      <td>6.76</td>
+      <td>10.65</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>high level</td>
-      <td>ca</td>
-      <td>03/11/18</td>
-      <td>60.269763</td>
-      <td>-117.642164</td>
-      <td>58.516667</td>
-      <td>-117.133333</td>
-      <td>63</td>
-      <td>28.40</td>
-      <td>20</td>
-      <td>5.82</td>
+      <td>avarua</td>
+      <td>ck</td>
+      <td>03/13/18</td>
+      <td>-26.625163</td>
+      <td>-163.502506</td>
+      <td>-21.207778</td>
+      <td>-159.775000</td>
+      <td>94</td>
+      <td>77.00</td>
+      <td>75</td>
+      <td>4.70</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>ancud</td>
-      <td>cl</td>
-      <td>03/11/18</td>
-      <td>-41.174507</td>
-      <td>-82.892929</td>
-      <td>-41.868195</td>
-      <td>-73.828751</td>
-      <td>98</td>
-      <td>56.89</td>
-      <td>92</td>
-      <td>6.38</td>
+      <td>ushuaia</td>
+      <td>ar</td>
+      <td>03/13/18</td>
+      <td>-89.554925</td>
+      <td>-53.932477</td>
+      <td>-54.800000</td>
+      <td>-68.300000</td>
+      <td>66</td>
+      <td>51.80</td>
+      <td>40</td>
+      <td>6.93</td>
     </tr>
   </tbody>
 </table>
@@ -302,7 +300,7 @@ weather_py.plot_lat_lon()
 ```
 
 
-![png](output_5_0.png)
+![png](output_6_0.png)
 
 
 
@@ -311,7 +309,7 @@ weather_py.plot_lat_lon(use_actual=True)
 ```
 
 
-![png](output_6_0.png)
+![png](output_7_0.png)
 
 
 The 'Actual' coordinates match the map of the world so analysis will based on the scatter plot using the 'Actual' latitude as they are more precise.
@@ -325,8 +323,19 @@ weather_py.plot_weather(use_actual=True)
     
 
 
-![png](output_8_1.png)
+![png](output_9_1.png)
 
+
+
+```python
+weather_py.plot_weather(use_actual=False)
+```
+
+
+![png](output_10_0.png)
+
+
+As observed, if using the original random latitude and longitude, there location on higer latitude will see biggest problem.
 
 ### Destruct object to clean up
 
