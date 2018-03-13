@@ -1,6 +1,6 @@
 # Unit 6 | Assignemtn -What's the Weather Like?
 
-If you want to run the code, please install Python package citipy and geopy.
+If you want to run the code, please install Python package citipy:
 
 ```bash
 pip install citipy
